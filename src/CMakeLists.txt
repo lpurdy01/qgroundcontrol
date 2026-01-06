@@ -71,6 +71,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         pch.h
         QGCApplication.cc
         QGCApplication.h
+        HeadlessMissionRunner.cc
+        HeadlessMissionRunner.h
 )
 
 # Platform-specific sources
