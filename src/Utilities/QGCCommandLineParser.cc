@@ -20,6 +20,7 @@ static const QString kOptClearCache      = QStringLiteral("clear-cache");
 static const QString kOptLogging         = QStringLiteral("logging");
 static const QString kOptLogOutput       = QStringLiteral("log-output");
 static const QString kOptSimpleBoot      = QStringLiteral("simple-boot-test");
+static const QString kOptAutoFlyPlan     = QStringLiteral("auto-fly-plan");
 static const QString kOptFakeMobile      = QStringLiteral("fake-mobile");
 static const QString kOptAllowMultiple   = QStringLiteral("allow-multiple");
 static const QString kOptUnittest        = QStringLiteral("unittest");
@@ -99,6 +100,12 @@ CommandLineParseResult parseCommandLine()
         kOptSimpleBoot,
         QCoreApplication::translate("main", "Initialize subsystems and exit."));
     (void) parser.addOption(simpleBootOpt);
+
+    const QCommandLineOption autoFlyPlanOpt(
+        kOptAutoFlyPlan,
+        QCoreApplication::translate("main", "Automatically load and start the specified mission plan after connecting."),
+        QCoreApplication::translate("main", "file"));
+    (void) parser.addOption(autoFlyPlanOpt);
 
 #if defined(QGC_UNITTEST_BUILD)
     const QCommandLineOption unittestOpt(
@@ -214,6 +221,10 @@ CommandLineParseResult parseCommandLine()
     }
     out.logOutput = parser.isSet(logOutputOpt);
     out.simpleBootTest = parser.isSet(simpleBootOpt);
+
+    if (parser.isSet(autoFlyPlanOpt)) {
+        out.autoFlyPlan = parser.value(autoFlyPlanOpt);
+    }
 
 #if defined(QGC_UNITTEST_BUILD)
     if (parser.isSet(unittestOpt)) {

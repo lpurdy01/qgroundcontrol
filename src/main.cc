@@ -9,12 +9,14 @@
 
 #include <QtQuick/QQuickWindow>
 #include <QtWidgets/QApplication>
+#include <QtCore/QTextStream>
 
 #include "QGCApplication.h"
 #include "QGCCommandLineParser.h"
 #include "QGCLogging.h"
 #include "Platform.h"
 #include "NTRIP.h"
+#include "HeadlessMissionRunner.h"
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
     #include <QtWidgets/QMessageBox>
@@ -66,6 +68,16 @@ int main(int argc, char *argv[])
             // TODO: QCommandLineParser::showMessageAndExit(QCommandLineParser::MessageType::Error) - Qt6.9
             return 1;
         }
+
+        if (args.statusCode == QGCCommandLineParser::CommandLineParseResult::Status::HelpRequested) {
+            QTextStream(stdout) << args.helpText;
+            return 0;
+        }
+
+        if (args.statusCode == QGCCommandLineParser::CommandLineParseResult::Status::VersionRequested) {
+            QTextStream(stdout) << args.versionText << Qt::endl;
+            return 0;
+        }
     }
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -94,6 +106,10 @@ int main(int argc, char *argv[])
     Platform::setupPostApp();
 
     app.init();
+
+    if (args.autoFlyPlan && !args.autoFlyPlan->isEmpty()) {
+        new HeadlessMissionRunner(*args.autoFlyPlan, &app);
+    }
 
     int exitCode = 0;
     if (args.runningUnitTests) {

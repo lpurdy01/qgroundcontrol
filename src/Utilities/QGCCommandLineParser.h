@@ -52,6 +52,8 @@ struct CommandLineParseResult
     bool useDesktopGL = false;
     bool useSwRast = false;
     bool quietWindowsAsserts = false;
+
+    std::optional<QString> autoFlyPlan;
 };
 
 /// Parse the application's command-line arguments into result.
